@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Pushup Pose Detection</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        #processedImage {
+            border: 2px solid #ddd;
+            padding: 5px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Push UP 자세 교정</h1>
+
+    <video hidden="hidden" id="webcam" type="hidden" autoplay="autoplay" playsinline="playsinline" width="640" height="480" display="none"></video>
+
+    <img id='processedImage' width='640' height='480'>
+    <p id="good_pushup">적당?: -</p>
+    <p id="wristDistance">손목 사이 거리: -</p>
+    <p id="shoulderDistance">어깨 사이 거리: -</p>
+    <p id="w_s_ratio">손목/어깨 비율: -</p>
+
+    <script>
+      
+      const webcamElement = document.getElementById('webcam');
+      const wristDistanceElement = document.getElementById('wristDistance');
+      const shoulderDistanceElement = document.getElementById('shoulderDistance');
+      const wsRatioElement = document.getElementById('w_s_ratio');
+
+      const goodPushupElement = document.getElementById('good_pushup');
+      // 웹캠 설정 및 시작
+      async function setupWebcam() {
+        return new Promise((resolve, reject) => {
+          navigator
+            .mediaDevices
+            .getUserMedia({video: true})
+            .then((stream) => {
+              webcamElement.srcObject = stream;
+              webcamElement.addEventListener('loadeddata', () => {
+                resolve();
+              }, false);
+            })
+            .catch(reject);
+        });
+      }
+
+      let socket;
+
+      function connectWebSocket() {
+        socket = new WebSocket('ws://localhost:8000/wsPushup');
+        socket.onopen = function () {
+          console.log("WebSocket connected");
+          sendWebcamData();
+        };
+        socket.onclose = function () {
+          console.log("WebSocket disconnected");
+          // 필요한 경우 여기에 재연결 로직을 추가할 수 있습니다.
+        };
+        socket.onmessage = function (event) {
+          const data = JSON.parse(event.data);
+          wristDistanceElement.innerText = `손목 사이 거리: ${data
+            .wrist_distance
+            .toFixed(2)}`;
+            shoulderDistanceElement.innerText = `어깨 사이 거리: ${data
+            .shoulder_distance.toFixed(2)}`;
+            wsRatioElement.innerText = `손목/어깨 길이 비율: ${data
+            .w_s_ratio.toFixed(2)}`;
+            goodPushupElement.innerText = `${data.good_pushup}`;
+          // 서버에서 받은 영상 데이터를 이미지 태그에 표시
+          const imageElement = document.getElementById('processedImage');
+          if (data.frame) {
+            imageElement.src = 'data:image/jpeg;base64,' + data.frame;
+          }
+        };
+      }
+
+      function sendWebcamData() {
+        const canvas = document.createElement('canvas');
+        canvas.width = webcamElement.width;
+        canvas.height = webcamElement.height;
+        const ctx = canvas.getContext('2d');
+
+        setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) {
+            ctx.drawImage(webcamElement, 0, 0, canvas.width, canvas.height);
+            const data = canvas.toDataURL('image/jpeg');
+            socket.send(data);
+          }
+        }, 100); // 100ms 간격으로 데이터 전송
+      }
+
+      setupWebcam().then(connectWebSocket);
+    
+
+    </script>
+</body>
+
+</html>
