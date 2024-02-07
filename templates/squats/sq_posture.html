@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+  <title>Display Webcam Stream</title>
+  <style>
+    body {
+      margin: 50px;
+    }
+    #container {
+      margin: 0px auto;
+      width: 1000px;
+      height: 375px;
+    }
+    #videoElement {
+      width: 500px;
+      height: 375px;
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <h2 class="ui center aligned icon header">
+    <i class="circular users icon"></i>
+    your very own AI personal trainer - Squats edition
+  </h2>
+  <img class="ui fluid image" id="videoElement" src="/squats/video_feed">
+  <!-- Use an <img> element with the src attribute pointing to your /video_feed endpoint -->
+
+  <button><a href="/">Detection mode</a></button>
+  <button><a href="/add_face">Capture mode</a></button>
+</div>
+
+<script>
+
+</script>
+</body>
+</html>
