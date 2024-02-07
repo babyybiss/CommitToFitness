@@ -21,6 +21,8 @@ abs_path = os.path.dirname(os.path.realpath("__file__"))
 templates = Jinja2Templates(directory=f"{abs_path}/templates")
 cap = cv2.VideoCapture(0)  # Use webcam (camera index 0) instead of a video file
 
+# 정적 파일 제공 경로 설정
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class SquatCounter:
     def __init__(self):
@@ -73,3 +75,7 @@ def squats_count_reset(req : Request):
 def video_feed():
     # Return the streaming response using the generator
     return StreamingResponse(squatsGen(), media_type='multipart/x-mixed-replace; boundary=frame')
+
+@app.get("/curl")
+def read_curl(req : Request):
+    return templates.TemplateResponse("curl/index.html", {"request": req})
