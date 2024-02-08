@@ -59,11 +59,11 @@ def sq_func(img, squat_counter):
         combined_per = (right_per + left_per) / 2
 
         cv2.rectangle(img, (1100, 100), (1175, 650), (0,255,0), 3)
-        cv2.rectangle(img, (1100, int(bar)), (1175, 650), (0,255,0), cv2.FILLED)
-        cv2.putText(img, f"{int(combined_per)} %", (1100, 60), cv2.FONT_HERSHEY_PLAIN, 3,
-                    (255, 0, 0), 4)
+        cv2.rectangle(img, (1100, int(bar)), (1175, 650), (255,255,255), cv2.FILLED)
+        cv2.putText(img, f"{int(combined_per)} %", (1080, 60), cv2.FONT_HERSHEY_PLAIN, 3,
+                    (255, 255, 255), 3)
         cv2.putText(img, f"Counts: {str(int(squat_counter.count))}", (50,100), cv2.FONT_HERSHEY_PLAIN,5,
-                                        (255,0,0),5)
+                                        (255,255,255),5)
     return img
     #cv2.imshow("Image", img)
     #cv2.waitKey(1)
