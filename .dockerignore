@@ -1,0 +1,15 @@
+!pyproject.toml
+!.env
+!.env.*
+
+.venv
+.git
+.github/*
+.gitignore
+.vscode
+.idea
+md
+Dockerfile*
+docker-compose*
+__pycache__
+poetry.lock
