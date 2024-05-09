@@ -6,8 +6,8 @@ from fastapi.responses import StreamingResponse, HTMLResponse
 from typing import List 
 
 from pydantic import BaseModel
+import cv2 
 import src.squats.squats as sq
-import cv2
 import numpy as np
 import io
 import base64
