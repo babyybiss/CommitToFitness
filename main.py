@@ -44,7 +44,12 @@ squat_counter = SquatCounter()
         
 @app.get("/")
 def root(req: Request):
+    return "alive"
+
+@app.get("/health_check")
+def root(req: Request):
     return templates.TemplateResponse("index.html", {"request": req})
+
 
 @app.get("/squats/counting")
 def getCountingTemplate(req: Request):
