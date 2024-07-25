@@ -6,19 +6,19 @@ import numpy as np
 #STEP 3: create a class that has objects and methods to detect the pose and find all the points(landmarks)
 class poseDetector():
     
-    def __init__(self, mode= False, upBody = False, smooth = True, 
-                 #이거 detectionCon 0.5가 아닌 bool False로 바뀐 이유 찾아보셈
-                 detectionCon=False, trackCon=0.5):
+    def __init__(self, mode=False, complexity=1, smooth_landmarks=True, enable_seg=False, smooth_seg=True, detectionCon=0.5, trackCon=0.5):
+        
         self.mode = mode
-        self.upBody = upBody
-        self.smooth = smooth
+        self.complexity = complexity
+        self.smooth_landmarks = smooth_landmarks
+        self.enable_seg = enable_seg
+        self.smooth_seg = smooth_seg
         self.detectionCon = detectionCon
         self.trackCon = trackCon
             
         self.mpDraw = mp.solutions.drawing_utils
         self.mpPose = mp.solutions.pose
-        self.pose = self.mpPose.Pose(self.mode, self.upBody, self.smooth, 
-                                     self.detectionCon, self.trackCon)
+        self.pose = self.mpPose.Pose(self.mode, self.complexity, self.smooth_landmarks, self.enable_seg, self.smooth_seg ,self.detectionCon, self.trackCon)
 
     def findPose(self, img, draw=True):
         img = cv2.convertScaleAbs(img)

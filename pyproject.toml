@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "commit-to-fitness"
+version = "0.1.0"
+description = ""
+authors = ["babyybiss <hyunni.dev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+fastapi = "^0.111.0"
+mediapipe = "^0.10.14"
+opencv-python = "^4.9.0.80"
+ultralytics = "^8.2.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

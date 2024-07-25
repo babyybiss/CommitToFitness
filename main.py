@@ -6,8 +6,8 @@ from fastapi.responses import StreamingResponse, HTMLResponse
 from typing import List 
 
 from pydantic import BaseModel
+import cv2 
 import src.squats.squats as sq
-import cv2
 import numpy as np
 import io
 import base64
@@ -44,7 +44,12 @@ squat_counter = SquatCounter()
         
 @app.get("/")
 def root(req: Request):
+    return "alive"
+
+@app.get("/health_check")
+def root(req: Request):
     return templates.TemplateResponse("index.html", {"request": req})
+
 
 @app.get("/squats/counting")
 def getCountingTemplate(req: Request):
