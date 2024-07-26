@@ -8,7 +8,6 @@ WORKDIR /tmp
 
 RUN pip install poetry
 
-
 COPY pyproject.toml /tmp/
 
 # Export requirements.txt
