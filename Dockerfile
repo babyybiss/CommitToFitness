@@ -1,10 +1,12 @@
+# Use a compatible base image for arm64
+FROM --platform=linux/arm64 python:3.11-slim as base
+
 # Stage 1: Install Dependencies
-FROM python:3.11.9 as requirements-stage
+FROM base as requirements-stage
 
 WORKDIR /tmp
 
 RUN pip install poetry
-
 
 COPY pyproject.toml /tmp/
 
