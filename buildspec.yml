@@ -5,13 +5,11 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      # Secrets Manager에서 환경 변수 값 가져오기
-      - echo Get SecretManager Values... on `date`
-      - aws secretsmanager get-secret-value --secret-id $AWS_SECRET_ID --region $AWS_REGION | jq -r '.SecretString' | jq -r "to_entries|map(\"\(.key)=\\\"\(.value|tostring)\\\"\")|.[]" > .env.dev
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region $AWS_REGION | docker login -u AWS --password-stdin $ECR_REGISTRY
-
+      - echo $AWS_REGION
+      - echo $AWS_ACCOUNT_ID
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   pre_build:
     commands:
       - echo Building the Docker image...
