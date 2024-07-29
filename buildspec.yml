@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      # Secrets Manager에서 환경 변수 값 가져오기
+      - echo Get SecretManager Values... on `date`
+      - aws secretsmanager get-secret-value --secret-id $AWS_SECRET_ID --region $AWS_REGION | jq -r '.SecretString' | jq -r "to_entries|map(\"\(.key)=\\\"\(.value|tostring)\\\"\")|.[]" > .env.dev
+  pre_build:
+    commands:
+      # IMAGE_TAG 정의 및 ECR Login
+      - echo Logging in to Amazon ECR...
+      - IMAGE_TAG=prod-$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -b -8) # 커밋 ID의 8글자를 Tag로 지정
+      - echo Image tag is $IMAGE_TAG
+      # - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_REGION) $ECR_REGISTRY
+      - aws ecr get-login-password --region $AWS_REGION | docker login -u AWS --password-stdin commit-to-fitness
+
+  build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+  post_build:
+    commands:
+      - echo Updating ECS service to use the new image...
+      - aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
+
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: yes
