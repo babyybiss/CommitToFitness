@@ -59,6 +59,8 @@ def getCountingTemplate(req: Request):
 def getPostureTemplate(req: Request):
     return templates.TemplateResponse("squats/sq_posture.html", {"request": req})
 
+
+# Generator function to capture video frames, process them, and yield them
 def squatsGen():
     cap = cv2.VideoCapture(0)  # 0 for the default webcam
     while True:
