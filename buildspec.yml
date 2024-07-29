@@ -5,16 +5,18 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws --version
-      - echo $AWS_REGION
-      - echo $AWS_ACCOUNT_ID
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      # Secrets Manager에서 환경 변수 값 가져오기
+      - echo Get SecretManager Values... on `date`
+      - aws secretsmanager get-secret-value --secret-id $AWS_SECRET_ID --region $AWS_REGION | jq -r '.SecretString' | jq -r "to_entries|map(\"\(.key)=\\\"\(.value|tostring)\\\"\")|.[]" > .env.dev
   pre_build:
     commands:
-      - echo Building the Docker image...
-      - docker build -t $ECR_REPOSITORY .
-      - docker tag $ECR_REPOSITORY:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+      # IMAGE_TAG 정의 및 ECR Login
+      - echo Logging in to Amazon ECR...
+      - IMAGE_TAG=prod-$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -b -8) # 커밋 ID의 8글자를 Tag로 지정
+      - echo Image tag is $IMAGE_TAG
+      # - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_REGION) $ECR_REGISTRY
+      - aws ecr get-login-password --region $AWS_REGION | docker login -u AWS --password-stdin commit-to-fitness
+
   build:
     commands:
       - echo Pushing the Docker image to ECR...
