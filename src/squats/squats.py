@@ -16,9 +16,7 @@ def sq_func(img, squat_counter):
     squat_counter.count
     squat_counter.dir
 
-    print("1111 mg? : ", img)
     img = detector.findPose(img, draw=False)
-    print("2222 img? : ", img)
     #print(lmList)
     lmList = detector.findPosition(img, draw =False)
     
